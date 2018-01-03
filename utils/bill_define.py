@@ -4,6 +4,7 @@
 S_FORECAST_1 = 1
 S_ORDER_2 = 2
 S_RETURN_3 = 3
+S_ADJUST_CLASS_PRICE_4 = 4
 
 # 仓储
 ST_OUT_STORE_20 = 20
@@ -26,6 +27,7 @@ BILL_TYPE = [
     (S_FORECAST_1, '销售预报'),
     (S_ORDER_2, '销售订单'),
     (S_RETURN_3, '销售退单'),
+    (S_ADJUST_CLASS_PRICE_4, '分类调价'),
 
     # 仓储
     (ST_OUT_STORE_20, '销售出库'),

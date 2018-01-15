@@ -31,17 +31,15 @@ class ReportTable(object):
 
     @staticmethod
     def _add_row(row_index, row_pair, report_row, is_last_row=False):
-        last_pos = len(row_pair[1]) - 1
+        last_pos = len(row_pair[1]) - 1 if row_pair[1] else -1
         for i, d in enumerate(row_pair[0]):
             column_info = row_pair[1][i] if i <= last_pos else None
             ReportTable._add_column(d, report_row, row_index, is_last_row, column_info)
 
     @staticmethod
     def _add_column(d, report_row, row_index, is_last_row=False, column_info=None):
-        c = column.ReportColumn()
+        c = column.ReportColumn(d, column_info)
         report_row.add_column(c)
-        c.add_value(d)
-        c.add_column_info(column_info)
 
 
 class ColumnInfo(object):  # bg_color:True 或 颜色代码
@@ -81,32 +79,32 @@ class ColumnInfo(object):  # bg_color:True 或 颜色代码
 
     __repr__ = __str__
 
+# from odoo.utils.report import table
+# 例子：
+# line_below = table.ColumnInfo(is_line_below=True)
+# none_info = table.ColumnInfo()
+# color_info = table.ColumnInfo(bg_color=True)
+# color_info2 = table.ColumnInfo(bg_color='blue')
+# t = table.ReportTable()
+# t.add_row(['张安军', 3000, 200.23, 9999], [line_below, line_below, line_below, line_below])
+# t.add_row(['a', 'b', 'c'], [none_info, none_info, none_info])
+# t.add_row(['a2', 'b2', 'c2'], [line_below, line_below, line_below])
+# t.add_row(['a3', 'b3', 'c3'], [color_info, color_info, color_info])
+# t.add_row(['a4', 'b4', 'c4'], [none_info, none_info, none_info])
+# t.add_row(['a5', 'b5', 'c5'], [color_info2, color_info2, color_info2])
+# return t.get()
 
-    # 例子：
-    # line_below = report.table.column.ColumnInfo(is_line_below=True)
-    # none_info = report.table.column.ColumnInfo()
-    # color_info = report.table.column.ColumnInfo(bg_color=True)
-    # color_info2 = report.table.column.ColumnInfo(bg_color='blue')
-    # t = report.table.ReportTable()
-    # t.add_row(['张安军', 3000, 200.23, 9999], [line_below, line_below, line_below, line_below])
-    # t.add_row(['a', 'b', 'c'], [none_info, none_info, none_info])
-    # t.add_row(['a2', 'b2', 'c2'], [line_below, line_below, line_below])
-    # t.add_row(['a3', 'b3', 'c3'], [color_info, color_info, color_info])
-    # t.add_row(['a4', 'b4', 'c4'], [none_info, none_info, none_info])
-    # t.add_row(['a5', 'b5', 'c5'], [color_info2, color_info2, color_info2])
-    # return t.get()
-
-    # 例子2：
-    # line_below = report.table.column.ColumnInfo(is_line_below=True)
-    # none_info = report.table.column.ColumnInfo()
-    # col_span_2 = report.table.column.ColumnInfo(col_span=2)
-    # color_info = report.table.column.ColumnInfo(bg_color=True)
-    # color_info2 = report.table.column.ColumnInfo(bg_color='blue')
-    # t = report.table.ReportTable()
-    # t.add_row(['张安军', 3000, 200.23, 9999], [line_below, line_below, line_below, line_below])
-    # t.add_row(['a', 'b', 'c'], [col_span_2, none_info, none_info])
-    # t.add_row(['', 'a2', 'b2', 'c2'], [line_below, line_below, line_below, line_below])
-    # t.add_row(['a3', 'b3', 'c3'], [col_span_2, color_info, color_info])
-    # t.add_row(['', 'a4', 'b4', 'c4'], [none_info, none_info, none_info, none_info])
-    # t.add_row(['', 'a5', 'b5', 'c5'], [color_info2, color_info2, color_info2, color_info2])
-    # return t.get()
+# 例子2：
+# line_below = table.ColumnInfo(is_line_below=True)
+# none_info = table.ColumnInfo()
+# col_span_2 = table.ColumnInfo(col_span=2)
+# color_info = table.ColumnInfo(bg_color=True)
+# color_info2 = table.ColumnInfo(bg_color='blue')
+# t = table.ReportTable()
+# t.add_row(['张安军', 3000, 200.23, 9999], [line_below, line_below, line_below, line_below])
+# t.add_row(['a', 'b', 'c'], [col_span_2, none_info, none_info])
+# t.add_row(['', 'a2', 'b2', 'c2'], [line_below, line_below, line_below, line_below])
+# t.add_row(['a3', 'b3', 'c3'], [col_span_2, color_info, color_info])
+# t.add_row(['', 'a4', 'b4', 'c4'], [none_info, none_info, none_info, none_info])
+# t.add_row(['', 'a5', 'b5', 'c5'], [color_info2, color_info2, color_info2, color_info2])
+# return t.get()

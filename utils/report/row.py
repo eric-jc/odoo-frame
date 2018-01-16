@@ -19,10 +19,10 @@ class ReportRow(object):
         self._report_columns.extend(report_columns)
 
     def get(self):
-        fm = '''<tr>
+        fm = u'''<tr>
         {}</tr>'''
         cs = ''
         for c in self._report_columns:
-            cs += c.get() + '''
+            cs += c.get() + u'''
             '''
         return fm.format(cs)

@@ -10,7 +10,7 @@ class ReportTable(object):
         self._all_data.append((row_data, data_info))
 
     def get(self):
-        fm = ''' '
+        fm = u''' '
 <table class="table wq-table" style="margin-bottom:0px">
 <tbody>
     {}
@@ -18,7 +18,7 @@ class ReportTable(object):
 </table>
     ' '''
         last_pos = len(self._all_data) - 1
-        s = ''
+        s = u''
         for i, row_pair in enumerate(self._all_data):
             r = row.ReportRow()
             if i < last_pos:
@@ -54,23 +54,23 @@ class ColumnInfo(object):  # bg_color:True 或 颜色代码
         self.other_info = other_info
 
     def __str__(self):
-        style = ''
+        style = u''
         if not self.is_line_before:
-            style += 'border-top:none;'
+            style += u'border-top:none;'
         if self.is_line_below:
-            style += 'border-bottom: 1px solid gray;'
+            style += u'border-bottom: 1px solid gray;'
         if self.bg_color:
-            style += 'background-color:{};'.format(self.bg_color) if ColumnInfo._is_string(
-                self.bg_color) else 'background-color:#C0C0C0;'
+            style += u'background-color:{};'.format(self.bg_color) if ColumnInfo._is_string(
+                self.bg_color) else u'background-color:#C0C0C0;'
         if self.other_style:
             style += self.other_style
-        result = ' style="{}"'.format(style) if style else ''
+        result = u' style="{}"'.format(style) if style else ''
         if self.col_span:
-            result += ' colspan="{}"'.format(self.col_span)
+            result += u' colspan="{}"'.format(self.col_span)
         if self.row_span:
-            result += ' rowspan="{}"'.format(self.row_span)
+            result += u' rowspan="{}"'.format(self.row_span)
         if self.other_info:
-            result += ' ' + self.other_info
+            result += u' ' + self.other_info
         return result
 
     @staticmethod

@@ -72,7 +72,7 @@ class TableHelper(object):
         if same_deep == 0:
             return
         for i in range(same_deep):
-            data[i] = ''
+            data[i] = u''
 
     def get(self):
         self._add_head()

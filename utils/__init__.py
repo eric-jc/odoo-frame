@@ -7,3 +7,4 @@ from . import bill_define
 from . import spell
 from . import car_number
 from . import constant
+from . import cache_helper

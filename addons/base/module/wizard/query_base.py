@@ -12,8 +12,8 @@ PIVOT = 'pivot'
 class QueryBase(models.TransientModel):
     _description = u'Base：报表查询条件基类'
     _name = 'tmp.query_base'
-    _auto = False
-    _log_access = True
+    # _auto = False
+    # _log_access = True
 
     # sql相关：查询、查询结果
     _query_table = None  # 要查询的表
@@ -22,9 +22,9 @@ class QueryBase(models.TransientModel):
     _query_where_equal_fields = []  # 相等条件的字段
     _query_where_like_fields = []  # ilike条件的字段
     _query_where_fields_and_condition_dic = {}  # 非相等、非ilike条件字段。key：字段；value：条件表达式（例如date<value，其中，value会被替换为条件的值）
-    # _query_where_fields_organization = []  # 数据授权表达式。例如：[self.env['archives.organization'].get_customer_organization_condition_staff('staff_id')]
     _insert_table = None
     _insert_fields_date_or_string = []  # 日期或字符串字段。这2种字段，需要特殊处理。用于向查询结果表写入数据
+    _insert_fields_compute = {}  # 非查询字段。key:字段；value：func（参数为查询出来的数据行row，返回结果为要插入到数据库中的值）
 
     # 查询结果相关
     _show_xmlid_action = None
@@ -217,14 +217,17 @@ class QueryBase(models.TransientModel):
 
     def insert_data(self, data, show_fields):
         fields_str = u','.join(show_fields)
+        fields_compute = self._insert_fields_compute.keys()
+        if fields_compute:
+            fields_str += u','.join(fields_compute)
         sql_format = u'insert into {}' \
                      u'(create_uid,{}) '.format(self._insert_table.replace('.', '_'), fields_str)
         for row in data:
-            sql = self._get_insert_sql(row, sql_format, show_fields)
+            sql = self._get_insert_sql(row, sql_format, show_fields, fields_compute)
             self.env.cr.execute(sql)
         return
 
-    def _get_insert_sql(self, row, sql_format, show_fields):
+    def _get_insert_sql(self, row, sql_format, show_fields, fields_compute):
         values = []
         index = 0
         for f in show_fields:
@@ -233,6 +236,13 @@ class QueryBase(models.TransientModel):
             else:
                 values.append(str(QueryBase._get_data(row, index)))
             index += 1
+        if fields_compute:
+            for f in fields_compute:
+                v = self._insert_fields_compute[f](row)
+                if util.is_string(v):
+                    values.append(v)
+                else:
+                    values.append(str(v))
         return sql_format + u'values(' + str(self._uid) + u',' + u','.join(values) + u')'
 
     @staticmethod

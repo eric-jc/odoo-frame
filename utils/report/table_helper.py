@@ -13,7 +13,6 @@ class TableHelper(object):
         self.details = []
         self.line_below = table.ColumnInfo(is_line_below=True)
         self.none_info = table.ColumnInfo()
-        self.deep = 1
         return
 
     def add_header(self, values):  # 不支持header的列数多余明细的列数的情况
@@ -25,25 +24,25 @@ class TableHelper(object):
     def add_details(self, details, deep=1):
         if not details or len(details) == 0:
             raise ValidationError(u'details参数不合法')
-        if deep < 1 or deep > len(details[0]):
+        if deep < 0 or deep > len(details[0]):
             raise ValidationError(u'deep参数不合法')
-        self.deep = deep
-        if len(self.details) > 0:
-            raise ValidationError(u'明细必须一次性添加')
-        # lines = groupby(details, key=lambda x: x[0])
-        # for key, group in lines:
-        #     if len(group) == 1:
-        #         info = [self.line_below for i in range(len(group[0]))]
-        #         self.table.add_row(group[0], info)
-        #         continue
-        #     last_pos = len(group) - 1
-        #     for i, d in enumerate(group):
-        #         if i == 0:
-        #             info = [self.none_info for i in range(len(group[0]))]
-        #             self.table.add_row(group[0], info)
-        for i in range(deep):
-            details = sorted(details, key=lambda x: x[deep - i - 1])
-        self._set_empty(details, deep)
+        if deep:
+            if len(self.details) > 0:
+                raise ValidationError(u'明细必须一次性添加')
+            # lines = groupby(details, key=lambda x: x[0])
+            # for key, group in lines:
+            #     if len(group) == 1:
+            #         info = [self.line_below for i in range(len(group[0]))]
+            #         self.table.add_row(group[0], info)
+            #         continue
+            #     last_pos = len(group) - 1
+            #     for i, d in enumerate(group):
+            #         if i == 0:
+            #             info = [self.none_info for i in range(len(group[0]))]
+            #             self.table.add_row(group[0], info)
+            for i in range(deep):
+                details = sorted(details, key=lambda x: x[deep - i - 1])
+            self._set_empty(details, deep)
         self.details = details
         return
 

@@ -9,11 +9,11 @@ TREE = 'tree'
 PIVOT = 'pivot'
 
 
-class QueryBase(models.TransientModel):
-    _description = u'Base：报表查询条件基类'
-    _name = 'tmp.query_base'
-    # _auto = False
-    # _log_access = True
+class QueryBase(models.Model):
+    _auto = False
+    _abstract = True
+    _transient = False
+    _register = False
 
     # sql相关：查询、查询结果
     _query_table = None  # 要查询的表
@@ -293,3 +293,10 @@ class QueryBase(models.TransientModel):
         for f in show_fields:
             context[f] = 1
         return context
+
+
+class TransientQuery(QueryBase):
+    _auto = True  # automatically create database backend
+    _register = False  # not visible in ORM registry, meant to be python-inherited only
+    _abstract = False  # not abstract
+    _transient = True  # transient

@@ -10,15 +10,17 @@ class TableHelper(object):
     def __init__(self):
         self.table = table.ReportTable()
         self.header = None
+        self.header_bg_color = None
         self.details = []
         self.line_below = table.ColumnInfo(is_line_below=True)
         self.none_info = table.ColumnInfo()
         return
 
-    def add_header(self, values):  # 不支持header的列数多余明细的列数的情况
+    def add_header(self, values, header_bg_color=None):  # 不支持header的列数多余明细的列数的情况
         if not values:
             return
         self.header = values
+        self.header_bg_color = header_bg_color
         return
 
     def add_details(self, details, deep=1):
@@ -78,18 +80,30 @@ class TableHelper(object):
         self._add_details()
         return self.table.get()
 
+    def _get_first_column_info(self, col_span):
+        if self.header_bg_color:
+            return table.ColumnInfo(col_span=col_span, bg_color=self.header_bg_color)
+        return table.ColumnInfo(is_line_below=True, col_span=col_span)
+
+    def _get_column_info_except_first(self):
+        if self.header_bg_color:
+            return table.ColumnInfo(bg_color=self.header_bg_color)
+        return table.ColumnInfo(is_line_below=True)
+
     def _add_head(self):
         if not self.header:
             return
+        header_info = self._get_column_info_except_first()
         detail_column_count = len(self.details[0]) if self.details and len(self.details) > 0 else -1
         if detail_column_count < 0:  # 没有明细
             info = [self.none_info for i in range(len(self.header))]
         elif len(self.header) >= detail_column_count:
-            info = [self.line_below for i in range(len(self.header))]
+            info = [header_info for i in range(len(self.header))]
         else:
             diff = detail_column_count - len(self.header)
-            info = [table.ColumnInfo(is_line_below=True, col_span=diff + 1)]
-            info.extend([self.line_below for i in range(len(self.header)) if i > 0])
+            first_column_info = self._get_first_column_info(diff + 1)
+            info = [first_column_info]
+            info.extend([header_info for i in range(len(self.header)) if i > 0])
         self.table.add_row(self.header, info)
 
     def _add_details(self):

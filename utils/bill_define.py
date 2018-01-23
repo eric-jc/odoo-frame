@@ -21,6 +21,10 @@ F_SALE_ACCOUNT_40 = 40
 # 活禽采购
 PP_REQUEST_60 = 60
 PP_DISPATCH_CAR_61 = 61
+PP_CAR_NOTICE_62 = 62
+PP_SHED_RECORD_63 = 63
+PP_WEIGHT_RECORD_64 = 64
+PP_SETTLEMENT_65 = 65
 
 BILL_TYPE = [
     # 销售
@@ -44,5 +48,9 @@ BILL_TYPE = [
     # 活禽采购
     (PP_REQUEST_60, '订购申请'),
     (PP_DISPATCH_CAR_61, '采购派车'),
+    (PP_CAR_NOTICE_62, '出车通知'),
+    (PP_SHED_RECORD_63, '棚前记录'),
+    (PP_WEIGHT_RECORD_64, '胴体过磅'),
+    (PP_SETTLEMENT_65, '活禽结算'),
 
 ]

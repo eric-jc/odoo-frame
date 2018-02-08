@@ -85,3 +85,4 @@ import http
 # utils
 #----------------------------------------------------------
 import utils
+import base_class

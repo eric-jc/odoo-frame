@@ -4,6 +4,8 @@ from odoo import models, fields, api
 from . import detail
 
 
+# 提取的类不能直接使用，否则会出现错误。举例：应用到【销售订单】中时，{金额}在保存时，还是保持保存前的值。
+# 这是因为depends没有生效。正常情况下，在执行保持操作时，会执行对应的depends方法。但是，继承这个基类，就不会执行。有时间时，查明该问题的原因
 class DetailMobileBase(detail.DetailBase):  # 存货明细，含数量单价金额，用于手机
     _auto = False
     _abstract = True

@@ -10,8 +10,7 @@ class ReportTable(object):
         self._all_data.append((row_data, data_info))
 
     def get(self):
-        fm = u''' '
-<table class="table wq-table" style="margin-bottom:0px">
+        fm = u''' '<table class="table wq-table" style="margin-bottom:0px">
 <tbody>
     {}
 </tbody>

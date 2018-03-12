@@ -22,8 +22,7 @@ class QueryBase(models.Model):
     _query_where_equal_fields = []  # 相等条件的字段
     _query_where_like_fields = []  # ilike条件的字段
     _query_where_fields_and_condition_dic = {}  # 非相等、非ilike条件字段。key：字段；value：条件表达式（例如date<value，其中，value会被替换为条件的值）
-    _insert_table = None
-    _insert_fields_date_or_string = []  # 日期或字符串字段。这2种字段，需要特殊处理。用于向查询结果表写入数据
+    _insert_model = None
     _insert_fields_compute = {}  # 非查询字段。key:字段；value：func（参数为查询出来的数据行row，返回结果为要插入到数据库中的值）
 
     # 查询结果相关
@@ -34,7 +33,6 @@ class QueryBase(models.Model):
     _show_order = [TREE, KAN_BAN, PIVOT]  # 所有的显示顺序，添加到这里。使用时，在子类中，选择需要的，并排序
 
     _ignore_fields = ['id', 'create_date', 'write_date', 'create_uid', 'write_uid', 'display_name', 'current_user_id']
-    _insert_sql_format = u'insert into {}(create_uid,{}) '
 
     # 数据授权表达式。例如：[self.env['archives.organization'].get_customer_organization_condition_staff('staff_id')]
     def get_organizations(self):
@@ -92,7 +90,7 @@ class QueryBase(models.Model):
     def query(self):
         if not self._query_table:
             raise ValidationError(u'开发错误：请给_query_table赋值')
-        if not self._insert_table:
+        if not self._insert_model:
             raise ValidationError(u'开发错误：请给_insert_table赋值')
         if not self._show_xmlid_action:
             raise ValidationError(u'开发错误：请给_show_xmlid_action赋值')
@@ -215,49 +213,27 @@ class QueryBase(models.Model):
     #     return ''
 
     def clear_data(self):
-        sql = 'DELETE FROM {} WHERE create_uid = {}'.format(self._insert_table.replace('.', '_'), self._uid)
+        sql = 'DELETE FROM {} WHERE create_uid = {}'.format(self._insert_model.replace('.', '_'), self._uid)
         self.env.cr.execute(sql)
 
     def insert_data(self, data, show_fields):
-        fields_str = u','.join(show_fields)
-        fields_compute = self._insert_fields_compute.keys()
-        if fields_compute:
-            fields_str += u','.join(fields_compute)
-        sql_format = self._insert_sql_format.format(self._insert_table.replace('.', '_'), fields_str)
         for row in data:
-            sql = self._get_insert_sql(row, sql_format, show_fields, fields_compute)
-            self.env.cr.execute(sql)
+            dic = self._get_values_dic(row, show_fields)
+            dic['create_uid'] = str(self._uid)
+            self.env[self._insert_model].create(dic)
         return
 
-    def _get_insert_sql_value_format(self):
-        return u'values(' + str(self._uid) + u','
-
-    def _get_insert_sql(self, row, sql_format, show_fields, fields_compute):
-        values = []
+    def _get_values_dic(self, row, show_fields):
+        dic = {}
         index = 0
         for f in show_fields:
-            if f in self._insert_fields_date_or_string:
-                values.append(QueryBase._get_data_string_or_date(row, index))
-            else:
-                values.append(str(QueryBase._get_data(row, index)))
+            dic[f] = row[index]
             index += 1
-        if fields_compute:
-            for f in fields_compute:
-                v = self._insert_fields_compute[f](row)
-                if util.is_string(v):
-                    values.append(v)
-                else:
-                    values.append(str(v))
-        _insert_sql_value_format = self._get_insert_sql_value_format()
-        return sql_format + _insert_sql_value_format + u','.join(values) + u')'
-
-    @staticmethod
-    def _get_data(row, index):
-        return row[index] if row[index] else u'null'
-
-    @staticmethod
-    def _get_data_string_or_date(row, index):
-        return u"'" + row[index] + u"'" if row[index] else u'null'
+        if self._insert_fields_compute:
+            for key, func in self._insert_fields_compute:
+                v = func(row)
+                dic[f] = v
+        return dic
 
     def open_result(self, show_fields):
         imd = self.env['ir.model.data']

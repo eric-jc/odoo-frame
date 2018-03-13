@@ -10,12 +10,11 @@ class ReportTable(object):
         self._all_data.append((row_data, data_info))
 
     def get(self):
-        fm = u''' '<table class="table wq-table" style="margin-bottom:0px">
+        fm = u'''<table class="table wq-table" style="margin-bottom:0px">
 <tbody>
     {}
 </tbody>
-</table>
-    ' '''
+</table>'''
         last_pos = len(self._all_data) - 1
         s = u''
         for i, row_pair in enumerate(self._all_data):

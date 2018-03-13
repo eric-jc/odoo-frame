@@ -100,7 +100,7 @@ class QueryBase(models.Model):
         self.insert_data(data, show_fields)
         return self.open_result(show_fields)
 
-    def _get_show_fields(self):
+    def _get_show_fields(self):  # 所有显示字段
         show_fields = []
         # if self.s_month:
         #     show_fields.append('month')

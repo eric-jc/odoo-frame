@@ -26,6 +26,10 @@ PP_SHED_RECORD_63 = 63
 PP_WEIGHT_RECORD_64 = 64
 PP_SETTLEMENT_65 = 65
 
+# 人事单据
+HR_TRANSFER_IN_80 = 80
+HR_TRANSFER_OUT_81 = 81
+
 BILL_TYPE = [
     # 销售
     (S_FORECAST_1, '销售预报'),
@@ -52,5 +56,9 @@ BILL_TYPE = [
     (PP_SHED_RECORD_63, '棚前记录'),
     (PP_WEIGHT_RECORD_64, '胴体过磅'),
     (PP_SETTLEMENT_65, '活禽结算'),
+
+    # 人事
+    (HR_TRANSFER_IN_80, '调出职单'),
+    (HR_TRANSFER_OUT_81, '调入职单'),
 
 ]

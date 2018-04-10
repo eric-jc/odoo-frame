@@ -229,6 +229,7 @@ class Cursor(object):
         try:
             params = params or None
             res = self._obj.execute(query, params)
+            # _logger.info(u"sql语句：%s,参数：%s", query, str(params))
         except Exception:
             if self._default_log_exceptions if log_exceptions is None else log_exceptions:
                 _logger.info("bad query: %s", self._obj.query or query)
